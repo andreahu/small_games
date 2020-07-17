@@ -2,7 +2,7 @@ import itertools
 import random
 
 
-class Minesweeper(): #This class has been entirely implemented
+class Minesweeper(): 
     """
     Minesweeper game representation
     """
@@ -100,7 +100,7 @@ class Sentence():
     def __str__(self):
         return f"{self.cells} = {self.count}"
 
-    def known_mines(self): #AH implemented
+    def known_mines(self): 
         """
         Returns the set of all cells in self.cells known to be mines.
         """
@@ -112,7 +112,7 @@ class Sentence():
             return None
         
 
-    def known_safes(self): #AH implemented
+    def known_safes(self): 
         """
         Returns the set of all cells in self.cells known to be safe.
         """
@@ -122,7 +122,7 @@ class Sentence():
             return None
 
 
-    def mark_mine(self, cell): #AH implemented
+    def mark_mine(self, cell): 
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be a mine.
@@ -134,7 +134,7 @@ class Sentence():
                 # raise Exception("wrong logic! sentence already zero")
                 self.count -= 1
 
-    def mark_safe(self, cell): #AH implemented
+    def mark_safe(self, cell): 
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
@@ -182,7 +182,7 @@ class MinesweeperAI():
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
 
-    def add_knowledge(self, cell, count): #AH implemented
+    def add_knowledge(self, cell, count): 
         """
         Called when the Minesweeper board tells us, for a given
         safe cell, how many neighboring cells have mines in them.
@@ -248,7 +248,7 @@ class MinesweeperAI():
         self.updateKnowledge()
 
 
-    def make_safe_move(self): #AH implemented
+    def make_safe_move(self): 
         """
         Returns a safe cell to choose on the Minesweeper board.
         The move must be known to be safe, and not already a move
@@ -264,7 +264,7 @@ class MinesweeperAI():
         return None
 
 
-    def make_random_move(self): #AH implemented
+    def make_random_move(self): 
         """
         Returns a move to make on the Minesweeper board.
         Should choose randomly among cells that:

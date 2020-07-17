@@ -10,7 +10,7 @@ O = "O"
 EMPTY = None
 
 
-def initial_state():#ah: this method is provided
+def initial_state():
     """
     Returns starting state of the board.
     """
