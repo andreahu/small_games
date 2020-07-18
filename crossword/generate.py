@@ -1,4 +1,6 @@
 import sys
+import math #ah imported
+from operator import itemgetter, attrgetter #ah imported
 
 from crossword import *
 
@@ -205,31 +207,24 @@ class CrosswordCreator():
         puzzle without conflicting characters); return False otherwise.
         """
 
-        varSet = set()
-
+        valueSet = set()
         for var in assignment:
-            if var in varSet: #check uniqueness
-                return False
-
-            for word in assignment[var]: #check length
+            for value in assignment[var]: 
+                #check uniqueness
+                if value in valueSet: 
+                    return False
+                else:
+                    varSet.add(var)
+                
+                #check length
                 if len(word) != var.length:
                     return False
 
-            var_neighbors = neighbors(self.crossword, var)
-            
-
-
-                    
-        
-
-
-
-
-
-
-
-
-
+            #check if no conflicts between neighboring variables
+            var_neighbors = neighbors(self.crossword, var) 
+            for n in var_neighbors: 
+                if revise(self, var, n)
+                return False
 
 
     def order_domain_values(self, var, assignment):
@@ -239,16 +234,28 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        
-        
 
+        # unOrderedDict = dict()
+        valueTupleList = []
+        var_neighbors = neighbors(self.crossword, var) 
 
+        for varValue in self.domains[var]:
+            count = 0
+            for n in var_neighbors:
+                if n in assignment.key():
+                    continue
 
+                overlap = self.crossword.overlaps(var, n)
+                i = overlap[0]
+                j = overlap[1]
+                targetLetter = varValue[i]
+                for nValue in self.domains[n]:
+                    if nValue[j] != targetLetter
+                    count += 1
 
+            valueTupleList.appen((varValue, count))
 
-
-
-
+        return sorted(valueTupleList, key=itemgetter(1))
 
 
     def select_unassigned_variable(self, assignment):
@@ -263,7 +270,7 @@ class CrosswordCreator():
         varsInAssignment = assignment.keys()
 
         resultVar = None 
-        fewest = 9999
+        fewest = math.inf
         for var in allVars:
             if var not in varsInAssignment:
                 if len(self.domains[var]) < fewest:
@@ -285,19 +292,40 @@ class CrosswordCreator():
         """
 
         #ah: below is preudo code in class.  https://cdn.cs50.net/ai/2020/spring/lectures/3/lecture3.pdf
-        """
-        function BACKTRACK(assignment, csp):
-            if assignment complete: return assignment
-            var = SELECT-UNASSIGNED-VAR(assignment, csp)
-            for value in DOMAIN-VALUES(var, assignment, csp):
-                if value consistent with assignment:
-                    add {var = value} to assignment
-                    result = BACKTRACK(assignment, csp)
-                    if result ≠ failure: return result
-                remove {var = value} from assignment
-            return failure
-        """
-        #ah: improved the code above for maintaining arc-consistency. In this case, could add a helper function
+    """
+    function BACKTRACK(assignment, csp):
+        if assignment complete: return assignment
+        var = SELECT-UNASSIGNED-VAR(assignment, csp)
+        for value in DOMAIN-VALUES(var, assignment, csp):
+            if value consistent with assignment:
+                add {var = value} to assignment
+                result = BACKTRACK(assignment, csp)
+                if result ≠ failure: return result
+            remove {var = value} from assignment
+        return failure
+    """
+
+        if assignment_complete(self, assignment):
+            return assignment
+
+        var = select_unassigned_variable(self, assignment)
+
+        for value in self.domains[var]:
+            assignment[var] = value
+            if consistent(self, assignment):
+                assignment[var] = value
+                result = backtrack(self, assignment)
+                if result is not None:
+                    return result
+            assignment.pop(var)
+        
+        return None
+
+
+
+
+        #ah: could improved the code above for maintaining arc-consistency. In this case, could add a helper function
+        #ah: I've given up this improvement
         """
         function BACKTRACK(assignment, csp):
             if assignment complete: return assignment
@@ -313,13 +341,7 @@ class CrosswordCreator():
             return failure
 
         """
-
-
-
-
-
-
-        raise NotImplementedError
+        
 
 
 def main():
