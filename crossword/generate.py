@@ -93,13 +93,18 @@ class CrosswordCreator():
         self.ac3()
         return self.backtrack(dict())
 
-    def enforce_node_consistency(self):
+
+    def enforce_node_consistency(self): 
         """
         Update `self.domains` such that each variable is node-consistent.
         (Remove any values that are inconsistent with a variable's unary
          constraints; in this case, the length of the word.)
         """
-        raise NotImplementedError
+        # domains property: a dictionary that maps variables to a set of possible words the variable might take on as a value
+        for variable in self.domains:
+            for word in self.domains[variable]:
+                if len(word) != variable.length
+                self.domains[variable].remove(word) #ah: modified the set while iterating. cast the set to a list?
 
     def revise(self, x, y):
         """
@@ -110,9 +115,35 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        raise NotImplementedError
+        #AH: below are the preudo code in class.  
+        # function REVISE(csp, X, Y):
+        #     revised = false
+        #     for x in X.domain:
+        #         if no y in Y.domain satisfies constraint for (X, Y):
+        #             delete x from X.domain
+        #             revised = true
+        #     return revised
+       
+        revised = False
+        overlap = self.crossword.overlaps[x,y]
 
-    def ac3(self, arcs=None):
+        if overlap != None:
+            i = overlap[0]
+            j = overlap[1]
+            for xWord in self.domains[x]:
+                match = False
+                letter = xWord[i]
+                for yWord in self.domains[y]:
+                    if yWord[j] == letter:
+                        match = True
+                if match == False:
+                    self.domains[x].remove[xWord] #ah: modified the set while iterating. cast the set to a list?
+                    revised = True
+        return revised
+
+
+    def ac3(self, arcs=None): 
+        #ah:if need to change a set while iterating it, you could cast it into a list
         """
         Update `self.domains` such that each variable is arc consistent.
         If `arcs` is None, begin with initial list of all arcs in the problem.
@@ -121,21 +152,85 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        #AH: below are the preudo code in class. https://cdn.cs50.net/ai/2020/spring/lectures/3/lecture3.pdf
+    #   function AC-3(csp):
+    #     queue = all arcs in csp
+    #     while queue non-empty:
+    #         (X, Y) = DEQUEUE(queue)
+    #         if REVISE(csp, X, Y):
+    #             if size of X.domain == 0:
+    #                 return false
+    #             for each Z in X.neighbors - {Y}:
+    #                 ENQUEUE(queue, (Z, X))
+    #     return true
+
+        allVariables = self.domains.keys()
+        for x in allVariables:
+            for y in allVariables:
+                if x is not y and self.crossword.overlaps[x,y] != None:
+                    if (y,x) not in arcs: # should I set this to avoid duplication?
+                        arcs.append((x,y))
+        
+        while len(arcs) != 0:
+            arc = arcs[len(arcs)-1]
+            arcs.pop()
+            x = arc[0]
+            y = arc[1]
+            if revise(self, x, y):
+                if len(self.domains[x]) == 0:
+                    return False
+                else:
+                    x_neighbors = neighbors(self.crossword, x)
+                    for z in x_neighbors:
+                        if z != y:
+                            arcs.append((z, x))
+        return True
+                    
 
     def assignment_complete(self, assignment):
         """
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        raise NotImplementedError
+
+        if len(assignment) == len(self.domains):
+            return True
+        else:
+            return False
+            
 
     def consistent(self, assignment):
         """
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+
+        varSet = set()
+
+        for var in assignment:
+            if var in varSet: #check uniqueness
+                return False
+
+            for word in assignment[var]: #check length
+                if len(word) != var.length:
+                    return False
+
+            var_neighbors = neighbors(self.crossword, var)
+            
+
+
+                    
+        
+
+
+
+
+
+
+
+
+
+
 
     def order_domain_values(self, var, assignment):
         """
@@ -144,7 +239,17 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+        
+        
+
+
+
+
+
+
+
+
+
 
     def select_unassigned_variable(self, assignment):
         """
@@ -154,7 +259,20 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        allVars = self.domains.keys()
+        varsInAssignment = assignment.keys()
+
+        resultVar = None 
+        fewest = 9999
+        for var in allVars:
+            if var not in varsInAssignment:
+                if len(self.domains[var]) < fewest:
+                    fewest = len(self.domains[var])
+                    resultVar = var
+        return resultVar
+
+
+
 
     def backtrack(self, assignment):
         """
@@ -165,6 +283,42 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
+
+        #ah: below is preudo code in class.  https://cdn.cs50.net/ai/2020/spring/lectures/3/lecture3.pdf
+        """
+        function BACKTRACK(assignment, csp):
+            if assignment complete: return assignment
+            var = SELECT-UNASSIGNED-VAR(assignment, csp)
+            for value in DOMAIN-VALUES(var, assignment, csp):
+                if value consistent with assignment:
+                    add {var = value} to assignment
+                    result = BACKTRACK(assignment, csp)
+                    if result ≠ failure: return result
+                remove {var = value} from assignment
+            return failure
+        """
+        #ah: improved the code above for maintaining arc-consistency. In this case, could add a helper function
+        """
+        function BACKTRACK(assignment, csp):
+            if assignment complete: return assignment
+            var = SELECT-UNASSIGNED-VAR(assignment, csp)
+            for value in DOMAIN-VALUES(var, assignment, csp):
+            if value consistent with assignment:
+                add {var = value} to assignment
+                inferences = INFERENCE(assignment, csp)
+                if inferences ≠ failure: add inferences to assignment
+                result = BACKTRACK(assignment, csp)
+                if result ≠ failure: return result
+                remove {var = value} and inferences from assignment
+            return failure
+
+        """
+
+
+
+
+
+
         raise NotImplementedError
 
 
@@ -191,6 +345,11 @@ def main():
         creator.print(assignment)
         if output:
             creator.save(assignment, output)
+
+
+
+    #ah test
+    # print(crossword.words)
 
 
 if __name__ == "__main__":
