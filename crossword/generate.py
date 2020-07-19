@@ -103,10 +103,10 @@ class CrosswordCreator():
          constraints; in this case, the length of the word.)
         """
         # domains property: a dictionary that maps variables to a set of possible words the variable might take on as a value
-        for variable in self.domains:
+        for var in self.domains:
             for word in self.domains[variable]:
-                if len(word) != variable.length
-                self.domains[variable].remove(word) #ah: modified the set while iterating. cast the set to a list?
+                if len(word) != var.length
+                self.domains[var].remove(word) #ah: modified the set while iterating. cast the set to a list?
 
     def revise(self, x, y):
         """
