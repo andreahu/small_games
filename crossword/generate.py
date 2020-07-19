@@ -1,6 +1,6 @@
 import sys
-import math #ah imported
-from operator import itemgetter, attrgetter #ah imported
+import math 
+from operator import itemgetter, attrgetter 
 
 from crossword import *
 
@@ -121,14 +121,6 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        #AH: below are the preudo code in class.  
-        # function REVISE(csp, X, Y):
-        #     revised = false
-        #     for x in X.domain:
-        #         if no y in Y.domain satisfies constraint for (X, Y):
-        #             delete x from X.domain
-        #             revised = true
-        #     return revised
        
         revised = False
         overlap = self.crossword.overlaps[x,y]
@@ -152,7 +144,7 @@ class CrosswordCreator():
 
 
     def ac3(self, arcs=None): 
-        #ah:if need to change a set while iterating it, you could cast it into a list
+        
         """
         Update `self.domains` such that each variable is arc consistent.
         If `arcs` is None, begin with initial list of all arcs in the problem.
@@ -161,17 +153,6 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        #AH: below are the preudo code in class. https://cdn.cs50.net/ai/2020/spring/lectures/3/lecture3.pdf
-    #   function AC-3(csp):
-    #     queue = all arcs in csp
-    #     while queue non-empty:
-    #         (X, Y) = DEQUEUE(queue)
-    #         if REVISE(csp, X, Y):
-    #             if size of X.domain == 0:
-    #                 return false
-    #             for each Z in X.neighbors - {Y}:
-    #                 ENQUEUE(queue, (Z, X))
-    #     return true
 
         if arcs is None:
             arcs = []
@@ -250,7 +231,6 @@ class CrosswordCreator():
         that rules out the fewest values among the neighbors of `var`.
         """
 
-        # unOrderedDict = dict()
         valueTupleList = []
         var_neighbors = neighbors(self.crossword, var) 
 
@@ -268,7 +248,7 @@ class CrosswordCreator():
                     if nValue[j] != targetLetter:
                         count += 1
 
-            valueTupleList.appen((varValue, count))
+            valueTupleList.append((varValue, count))
 
         return sorted(valueTupleList, key=itemgetter(1))
 
@@ -305,22 +285,6 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
-
-        """
-        ah: below is preudo code in class.  https://cdn.cs50.net/ai/2020/spring/lectures/3/lecture3.pdf
-
-        function BACKTRACK(assignment, csp):
-            if assignment complete: return assignment
-            var = SELECT-UNASSIGNED-VAR(assignment, csp)
-            for value in DOMAIN-VALUES(var, assignment, csp):
-                if value consistent with assignment:
-                    add {var = value} to assignment
-                    result = BACKTRACK(assignment, csp)
-                    if result ≠ failure: return result
-                remove {var = value} from assignment
-            return failure
-        """
-
         if self.assignment_complete(assignment):
             return assignment
 
@@ -337,26 +301,6 @@ class CrosswordCreator():
         
         return None
 
-
-
-
-        #ah: could improved the code above for maintaining arc-consistency. In this case, could add a helper function
-        #ah: I've given up this improvement
-        """
-        function BACKTRACK(assignment, csp):
-            if assignment complete: return assignment
-            var = SELECT-UNASSIGNED-VAR(assignment, csp)
-            for value in DOMAIN-VALUES(var, assignment, csp):
-            if value consistent with assignment:
-                add {var = value} to assignment
-                inferences = INFERENCE(assignment, csp)
-                if inferences ≠ failure: add inferences to assignment
-                result = BACKTRACK(assignment, csp)
-                if result ≠ failure: return result
-                remove {var = value} and inferences from assignment
-            return failure
-
-        """
         
 
 
@@ -385,9 +329,6 @@ def main():
             creator.save(assignment, output)
 
 
-
-    #ah test
-    # print(crossword.words)
 
 
 if __name__ == "__main__":
