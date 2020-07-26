@@ -1,4 +1,5 @@
 from nim import train, play
 
-ai = train(10000) #ah: could reduce to a small number when debugging
+ai = train(10000) 
+# ai = train(1) #testing purpose
 play(ai)
